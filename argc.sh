@@ -16,15 +16,16 @@ QUIET_MODE=0
 INFO_LEVEL=0
 
 # help screen 
-usage() {
-  echo "$0: example cli bash script [-h|i|f|v|V]"
+help_screen() {
+  echo "$0: example cli bash script [-h|i|f|o|q|v|V]"
   echo "options:"
-  echo "i          Info level [0|1|2]]"
-  echo "h          Help screen        "
-  echo "f          <file name>        "
-  echo "q          quiet mode         "
-  echo "v          enable verbose mode"
-  echo "V          Version            "
+  echo "I | --info          Info level [0|1|2]]"
+  echo "h | --help          Help screen        "
+  echo "f | --inputfile     <file name>        "
+  echo "o | --outputfile    <file name>        "
+  echo "q | --quiet         quiet mode         "
+  echo "v | --verbose       enable verbose mode"
+  echo "V | --Version       version string     "
 }
 
 # command line processing
@@ -32,7 +33,7 @@ while [[ $# -gt 0 ]]
 do
   case "$1" in
     -h|--help) 
-      usage
+      help_screen
       exit 0;;
     -q|--quiet)
       QUIET_MODE=1
@@ -40,8 +41,21 @@ do
     -i|--info)
       INFO_LEVEL="$2"
       shift;; 
-    -f|--filename)
-      FILENAME="$2"
+    -f|--inputfile)
+      if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
+        INPUT_FILENAME=$2
+      else
+        echo "[ERROR] no $1 <filename> supplied" >&2
+        exit 1
+      fi
+      shift;;
+    -o|--outputfile)
+      if [ -n "$2" ] && [ ${2:0:1} != "-" ]; then
+        OUTPUT_FILENAME=$2
+      else
+        echo "[ERROR] no $1 <filename< supplied" >&2
+        exit 1
+      fi
       shift;;
     -v|--verbose)
       VERSBOSE_MODE=1
@@ -56,7 +70,8 @@ do
   shift   
 done
 
-echo "Verbose Mode       $VERSBOSE_MODE"
-echo "Quiet Mode         $QUIET_MODE   "
-echo "Information level  $INFO_LEVEL   "
-echo "Filename           $FILENAME     "
+echo "Verbose Mode       $VERSBOSE_MODE  "
+echo "Quiet Mode         $QUIET_MODE     "
+echo "Information level  $INFO_LEVEL     "
+echo "Input Filename     $INPUT_FILENAME "
+echo "Output Filename    $OUTPUT_FILENAME"
